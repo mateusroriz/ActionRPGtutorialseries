@@ -20,7 +20,7 @@ onready var animationState = animationTree.get("parameters/playback") #getting a
 func _ready():
 	animationTree.active = true
 
-func _physics_process(delta): ## step event runs every single physics step
+func _process(delta): ## step event runs every single physics step
 	match state:
 		MOVE:
 			move_state(delta)
@@ -50,7 +50,7 @@ func move_state(delta):
 	
 	velocity = move_and_slide(velocity) 
 	
-	if Input.is_action_just_pressed("attack"):
+	if Input.is_action_just_pressed("attack_input"):
 		state = ATTACK
 
 func attack_state(delta):
