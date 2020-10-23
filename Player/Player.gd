@@ -20,7 +20,7 @@ onready var animationState = animationTree.get("parameters/playback") #getting a
 func _ready():
 	animationTree.active = true
 
-func _process(delta): ## step event runs every single physics step
+func _physics_process(delta): ## step event runs every single physics step
 	match state:
 		MOVE:
 			move_state(delta)
