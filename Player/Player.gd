@@ -18,10 +18,11 @@ var roll_vector = Vector2.LEFT
 onready var animationPlayer = $AnimationPlayer 
 onready var animationTree = $AnimationTree
 onready var animationState = animationTree.get("parameters/playback") #getting acess to the animations in the animation tree
+onready var swordHitbox = $HitboxPivot/SwordHitbox
 
 func _ready():
 	animationTree.active = true
-
+	swordHitbox.knockback_vector = roll_vector
 func _physics_process(delta): ## step event runs every single physics step
 	match state:
 		MOVE:
@@ -42,6 +43,8 @@ func move_state(delta):
 
 	if input_vector != Vector2.ZERO: # we are moving
 		roll_vector = input_vector #should be here so it isn't zero when it's not moving
+		swordHitbox.knockback_vector = input_vector # knockbackvector will be the same as the direction we are moving in
+		
 		animationTree.set("parameters/Idle/blend_position", input_vector) #set the bland position for the idle 
 		animationTree.set("parameters/Run/blend_position", input_vector)
 		animationTree.set("parameters/Attack/blend_position", input_vector) # has to be here because we have access to input vector
