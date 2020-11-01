@@ -1,5 +1,7 @@
 extends KinematicBody2D
 
+const PlayerHurtSound = preload("res://Player/PlayerHurtSound.tscn")
+
 export var ACCELERATION = 500
 export var MAX_SPEED = 80
 export var ROLL_SPEED = 125
@@ -21,6 +23,7 @@ onready var animationTree = $AnimationTree
 onready var animationState = animationTree.get("parameters/playback") #getting acess to the animations in the animation tree
 onready var swordHitbox = $HitboxPivot/SwordHitbox
 onready var hurtbox = $Hurtboxes
+onready var blinkAnimationPlayer = $BlinkAnimationPlayer
 
 func _ready():
 	randomize()
@@ -35,10 +38,10 @@ func _physics_process(delta): ## step event runs every single physics step
 			move_state(delta)
 		
 		ROLL:
-			roll_state(delta)
+			roll_state()
 			
 		ATTACK:
-			attack_state(delta)
+			attack_state()
 			
 	
 func move_state(delta): 
@@ -69,12 +72,12 @@ func move_state(delta):
 	if Input.is_action_just_pressed("attack_input"):
 		state = ATTACK
 
-func roll_state(delta):
+func roll_state():
 	velocity = roll_vector * ROLL_SPEED * 1.5 # goes instantily to max speed
 	animationState.travel("Roll")
 	move()
 
-func attack_state(delta):
+func attack_state():
 	velocity = Vector2.ZERO
 	animationState.travel("Attack")
 
@@ -83,14 +86,23 @@ func move():
 	
 
 func roll_animation_finished():
-	velocity = velocity * 0.5 #this is to kill the slide or not after the roll
+	velocity = velocity * 0.6 #this is to kill the slide or not after the roll
 	state = MOVE
 
 func attack_animation_finished():
 	state = MOVE
 
-
 func _on_Hurtboxes_area_entered(area):
-	stats.health -= 1
+	stats.health -= area.damage
 	hurtbox.start_invincibility(0.5)
 	hurtbox.create_hit_effect()
+	var playerHurtSound = PlayerHurtSound.instance()
+	get_tree().current_scene.add_child(playerHurtSound)
+
+
+func _on_Hurtboxes_invincibility_started():
+	blinkAnimationPlayer.play("Start")
+
+func _on_Hurtboxes_invincibility_ended():
+	blinkAnimationPlayer.play("Stop")
+

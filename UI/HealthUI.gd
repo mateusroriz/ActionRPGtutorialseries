@@ -23,5 +23,7 @@ func set_max_hearts(value):
 func _ready():
 	self.max_hearts = PlayerStats.max_health #setting our max hearts to be the playerrs
 	self.hearts = PlayerStats.health
+	# warning-ignore:return_value_discarded
 	PlayerStats.connect("health_changed", self, "set_hearts") #changing the value in the ui
+	# warning-ignore:return_value_discarded
 	PlayerStats.connect("max_health_changed", self, "set_max_hearts")
